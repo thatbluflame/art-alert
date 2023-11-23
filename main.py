@@ -55,7 +55,7 @@ async def on_message(message: discord.Message):
         return
     visit_url = message.jump_url
     for attachment in message.attachments:
-        if attachment.content_type.startswith('image'):
+        if attachment.content_type.startswith('image') or attachment.content_type.endswith('gif'):
             image_url = attachment.url
             break
         elif attachment.content_type.startswith('video'):
