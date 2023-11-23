@@ -3,8 +3,6 @@ import dotenv
 import os
 import typing
 import json
-import requests
-from ffmpy import FFmpeg
 
 dotenv.load_dotenv()
 
@@ -58,53 +56,16 @@ async def on_message(message: discord.Message):
         if attachment.content_type.startswith('image'):
             image_url = attachment.url
             break
-        elif attachment.content_type.startswith('video'):
-            video_url = attachment.url
-            break
     else:
         return
     channel_id = info['log']
     if channel_id == 0:
         print(['[WARNING] No alert channel set, skipping an artwork that should have an alert'])
     channel = await bot.fetch_channel(channel_id)
-    embed = discord.Embed(title='New art has been posted! Check it out below! ', color=EMBED_COLOR,
-                          description=f"Art by {message.author.mention} in {visit_url}")
-    file = None  # Define file before the if-else block
-    if 'image_url' in locals():
-        embed.set_thumbnail(url=image_url)
-        if message.content:
-            embed.description += f"\n**---------**\n{message.author.mention} said: '{message.content}'\nPlease press 'Visit' below!"
-        else:
-            embed.description += "\nPlease press 'Visit' below!"
-    elif 'video_url' in locals():
-        response = requests.get(video_url, stream=True)
-        if int(response.headers['Content-Length']) > 50 * 1024 * 1024:
-            if message.content:
-                embed.description += f"\n**---------**\n{message.author.mention} said: '{message.content}'\nThis artwork is a video but it's too large for a preview! Please press 'Visit' below!"
-            else:
-                embed.description += "\nThis artwork is a video but it's too large for a preview! Please press 'Visit' below!"
-            embed.title = 'New video artwork has been posted! Check it out below! '
-        else:
-            with open('input.mp4', 'wb') as f:
-                for chunk in response.iter_content(chunk_size=1024):
-                    if chunk:
-                        f.write(chunk)
-            ff = FFmpeg(
-                inputs={'input.mp4': None},
-                outputs={'output.gif': '-t 2 -y -vf scale="-1:70"'}
-            )
-            ff.run()
-            file = discord.File("output.gif", filename="output.gif")
-            if message.content:
-                embed.description += f"\n**---------**\n{message.author.mention} said: '{message.content}'\nHere is a 2 second gif preview, please press 'Visit' below!"
-                embed.title = 'New video artwork has been posted! Check it out! '
-                embed.set_image(url="attachment://output.gif")
-            else:
-                embed.description += "\nHere is a 2 second gif preview, please press 'Visit' below!"
-                embed.title = 'New video artwork has been posted! Check it out! '
-                embed.set_image(url="attachment://output.gif")
-
-    await channel.send(file=file, embed=embed, view=LinkView(visit_url), allowed_mentions=no_mentions)
+    embed = discord.Embed(title='New art has been posted ', color=EMBED_COLOR,
+                          description=f"{message.author.mention} in {visit_url}")
+    embed.set_thumbnail(url=image_url)
+    await channel.send(embed=embed, view=LinkView(visit_url), allowed_mentions=no_mentions)
 
 
 class LinkView(discord.ui.View):
@@ -174,3 +135,4 @@ async def listchannels(ctx: discord.ApplicationContext):
 
 get_data()
 bot.run(DISCORD_TOKEN)
+
