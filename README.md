@@ -1,7 +1,8 @@
-# art-alert
+# art-alert noreaction
 A basic discord bot to alert when new images are posted in a forum.
 Originally created by https://www.fiverr.com/devinyems156 on Fiverr
 Modified by me (thatbluflame) for fun
+noreaction is different from main in that it just doesnt automatically react to every alert sent
 
 ###How to use
 
