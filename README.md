@@ -8,6 +8,8 @@ Modified by me (thatbluflame) for fun
 
 Configure '.env.example' with your discord bot token, and rename to '.env'
 
+OPTIONAL: change EMOJI_ID to the id of the emoji you want to use for an automatic reaction to each alert, either use the actual emoji if its a unicode emoji or find the id using backslash \ and then ur emote, like \:pallas: and it should give you your emoji id
+
 
 How to Run: 
 
