@@ -104,7 +104,9 @@ async def on_message(message: discord.Message):
                 embed.title = 'New video artwork has been posted! Check it out! '
                 embed.set_image(url="attachment://output.gif")
 
-    await channel.send(file=file, embed=embed, view=LinkView(visit_url), allowed_mentions=no_mentions)
+    sent_message = await channel.send(file=file, embed=embed, view=LinkView(visit_url), allowed_mentions=no_mentions)
+    emoji = bot.get_emoji(EMOJI_ID)  # Replace emoji_id with the actual ID
+    await sent_message.add_reaction(emoji)
 
 
 class LinkView(discord.ui.View):
