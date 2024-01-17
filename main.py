@@ -91,16 +91,16 @@ async def on_message(message: discord.Message):
                         f.write(chunk)
             ff = FFmpeg(
                 inputs={'input.mp4': None},
-                outputs={'output.gif': '-t 2 -y -vf scale="-1:70"'}
+                outputs={'output.gif': '-t 5 -y -vf scale="-1:85"'}
             )
             ff.run()
             file = discord.File("output.gif", filename="output.gif")
             if message.content:
-                embed.description += f"\n**---------**\n{message.author.mention} said: '{message.content}'\nHere is a 2 second gif preview, please press 'Visit' below!"
+                embed.description += f"\n**---------**\n{message.author.mention} said: '{message.content}'\nHere is a 5 second gif preview, please press 'Visit' below!"
                 embed.title = 'New video artwork has been posted! Check it out! '
                 embed.set_image(url="attachment://output.gif")
             else:
-                embed.description += "\nHere is a 2 second gif preview, please press 'Visit' below!"
+                embed.description += "\nHere is a 5 second gif preview, please press 'Visit' below!"
                 embed.title = 'New video artwork has been posted! Check it out! '
                 embed.set_image(url="attachment://output.gif")
 
