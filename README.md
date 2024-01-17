@@ -13,6 +13,7 @@ Configure '.env.example' with your discord bot token, and rename to '.env'
 
 OPTIONAL: change EMOJI_ID (within main.py) to the id of the emoji you want to use for an automatic reaction to each alert, either use the actual emoji if its a unicode emoji or find the id using backslash \ and then ur emote, like \:pallas: and it should give you your emoji id
 
+I recommend using python 3.10 cuz thats what im using and im not sure if the other versions break anything.
 
 How to Run: 
 
