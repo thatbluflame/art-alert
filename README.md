@@ -26,7 +26,7 @@ python3 main.py
 
 # How to Use:
 
-The bot should create slash commands upon joining a server, which you can generate an invite link for using anyone online, just be sure to give the bot the correct intents to read messages. 
+The bot should create slash commands upon joining a server, you can generate an invite link [here](https://discordapi.com/permissions.html), just be sure to give the bot the correct intents to read messages. 
 
 /setlogchannel: sets the channel to report new art too
 
