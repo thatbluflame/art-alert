@@ -2,7 +2,7 @@
 
 A basic discord bot to alert when new images are posted in a forum.
 
-Originally created by https://www.fiverr.com/devinyems156 on Fiverr
+Originally created by [devinyems156](https://www.fiverr.com/devinyems156) on Fiverr
 
 Modified by me (thatbluflame) for fun
 
@@ -53,4 +53,4 @@ systemctl enable artalert
 
 systemctl start artalert
 
-# Personally though, I use PM2, way easier to use than a service.
+# Personally though, I use [PM2](https://pm2.keymetrics.io/docs/usage/quick-start/), way easier to use than a service.
