@@ -1,6 +1,6 @@
 # art-alert
 
-A basic discord bot to alert when new images are posted in a forum.
+A basic discord bot to alert when new images, videos, and gifs are posted in a forum (or normal chat). It sends alerts to a different chat and includes a link to view the original post. It also adds an emoji reaction if you add that to the env.
 
 Originally created by [devinyems156](https://www.fiverr.com/devinyems156) on Fiverr
 
