@@ -10,6 +10,7 @@ dotenv.load_dotenv()
 
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 EMBED_COLOR = int(os.getenv('EMBED_COLOR'), base=16)  # 0xffc0cb
+EMOJI_ID = int(os.getenv('EMOJI_ID'))
 
 intents = discord.Intents.default() + discord.Intents.message_content + discord.Intents.messages
 no_mentions = discord.AllowedMentions.none()
@@ -71,18 +72,23 @@ async def on_message(message: discord.Message):
                           description=f"Art by {message.author.mention} in {visit_url}")
     file = None  # Define file before the if-else block
     if 'image_url' in locals():
+        if len(message.content) > 200:
+            message_content = '"' + message.content[:200] + '..." ***Message shortened,***'
+        else:
+            message_content = '"' + message.content + '"'
         embed.set_thumbnail(url=image_url)
         if message.content:
-            embed.description += f"\n**---------**\n{message.author.mention} said: '{message.content}'\nPlease press 'Visit' below!"
-        else:
-            embed.description += "\nPlease press 'Visit' below!"
+            embed.description += f"\n**------------------**\n{message.author.mention} said: {message_content}"
+        embed.description += "\n## **Please press 'Visit' below!**"
     elif 'video_url' in locals():
         response = requests.get(video_url, stream=True)
         if int(response.headers['Content-Length']) > 50 * 1024 * 1024:
-            if message.content:
-                embed.description += f"\n**---------**\n{message.author.mention} said: '{message.content}'\nThis artwork is a video but it's too large for a preview! Please press 'Visit' below!"
+            if len(message.content) > 200:
+                message_content = '"' + message.content[:200] + '..." ***Message shortened,***'
             else:
-                embed.description += "\nThis artwork is a video but it's too large for a preview! Please press 'Visit' below!"
+                message_content = '"' + message.content + '"'
+            embed.description += f"\n**------------------**\n{message.author.mention} said: {message_content}\n**This artwork is a video but it's too large for a preview!**"
+            embed.description += "\n## **Please press 'Visit' below!**"
             embed.title = 'New video artwork has been posted! Check it out below! '
         else:
             with open('input.mp4', 'wb') as f:
@@ -95,17 +101,17 @@ async def on_message(message: discord.Message):
             )
             ff.run()
             file = discord.File("output.gif", filename="output.gif")
-            if message.content:
-                embed.description += f"\n**---------**\n{message.author.mention} said: '{message.content}'\nHere is a 5 second gif preview, please press 'Visit' below!"
-                embed.title = 'New video artwork has been posted! Check it out! '
-                embed.set_image(url="attachment://output.gif")
+            if len(message.content) > 200:
+                message_content = '"' + message.content[:200] + '..." ***Message shortened,***'
             else:
-                embed.description += "\nHere is a 5 second gif preview, please press 'Visit' below!"
-                embed.title = 'New video artwork has been posted! Check it out! '
-                embed.set_image(url="attachment://output.gif")
+                message_content = '"' + message.content + '"'
+            embed.description += f"\n**------------------**\n{message.author.mention} said: {message_content}\n**Here is a 5 second gif preview.**"
+            embed.description += "\n## **Please press 'Visit' below!**"
+            embed.title = 'New video artwork has been posted! Check it out! '
+            embed.set_image(url="attachment://output.gif")
 
     sent_message = await channel.send(file=file, embed=embed, view=LinkView(visit_url), allowed_mentions=no_mentions)
-    emoji = bot.get_emoji(EMOJI_ID)  # Replace emoji_id with the actual ID
+    emoji = bot.get_emoji(EMOJI_ID) 
     await sent_message.add_reaction(emoji)
 
 
