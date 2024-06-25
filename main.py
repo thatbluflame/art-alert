@@ -5,6 +5,8 @@ import typing
 import json
 import requests
 from ffmpy import FFmpeg
+import re
+from urllib.parse import urlparse, parse_qs
 
 dotenv.load_dotenv()
 
@@ -54,6 +56,34 @@ async def on_message(message: discord.Message):
         channel_id = message.channel.id
     if channel_id not in info['source']:
         return
+
+    youtube_url_pattern = r"(https?://)?(www\.)?(youtube\.com/watch\?v=|youtu\.be/)([a-zA-Z0-9_-]{11})"
+    match = re.search(youtube_url_pattern, message.content)
+    if match:
+        video_url = match.group(0)
+        # Remove the URL from the message content
+        message_content = re.sub(youtube_url_pattern, '', message.content).strip()
+        if len(message_content) > 200:
+            message_content = '"' + message_content[:200] + '..." ***Message shortened,***'
+        elif message_content:  # Check if there's any text left after removing the URL
+            message_content = '"' + message_content + '"'
+        else:
+            message_content = None  # Set to None if no other text is present
+
+        thumbnail_url = f"https://img.youtube.com/vi/{match.group(4)}/hqdefault.jpg"
+        embed = discord.Embed(title='New YouTube Video Artwork has been posted! Check it out below!', color=EMBED_COLOR,
+                              description=f"Art by {message.author.mention} in {message.jump_url}")
+        if message_content:
+            embed.description += f"\n**------------------**\n{message.author.mention} said: {message_content}"
+        embed.description += "\n## **Please press 'Visit' below!**"
+        embed.set_thumbnail(url=thumbnail_url)
+        channel = await bot.fetch_channel(info['log'])
+        view = LinkView(message.jump_url)
+        sent_message = await channel.send(embed=embed, view=view, allowed_mentions=no_mentions)
+        emoji = bot.get_emoji(EMOJI_ID)
+        await sent_message.add_reaction(emoji)
+        return
+
     visit_url = message.jump_url
     for attachment in message.attachments:
         if attachment.content_type.startswith('image') or attachment.content_type.endswith('gif'):
@@ -61,6 +91,9 @@ async def on_message(message: discord.Message):
             break
         elif attachment.content_type.startswith('video'):
             video_url = attachment.url
+            break
+        elif attachment.content_type.startswith('audio'):
+            audio_url = attachment.url
             break
     else:
         return
@@ -109,6 +142,16 @@ async def on_message(message: discord.Message):
             embed.description += "\n## **Please press 'Visit' below!**"
             embed.title = 'New video artwork has been posted! Check it out! '
             embed.set_image(url="attachment://output.gif")
+    elif 'audio_url' in locals():
+        if len(message.content) > 200:
+            message_content = '"' + message.content[:200] + '..." ***Message shortened,***'
+        else:
+            message_content = '"' + message.content + '"'
+        embed.title = 'New audio art has been posted!'
+        embed.set_thumbnail(url='https://cdn-0.emojis.wiki/emoji-pics/twitter/speaker-high-volume-twitter.png')
+        if message.content:
+            embed.description += f"\n**------------------**\n{message.author.mention} said: {message_content}"
+        embed.description += "\n## **Please press 'Visit' below!**"
 
     sent_message = await channel.send(file=file, embed=embed, view=LinkView(visit_url), allowed_mentions=no_mentions)
     emoji = bot.get_emoji(EMOJI_ID) 
